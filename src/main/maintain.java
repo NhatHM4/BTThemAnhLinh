@@ -35,17 +35,19 @@ public class maintain {
 //		for (Candidate cand : listCandidate.readFile()) {
 //			cand.showMe();
 ////		}
-//	List<Experience> listExp = new ExperienceDao().select();
-//	List<Fresher> listFresher = new FresherDao().select();
-//	List<Intern> listIntern = new InternDao().select();
-//	List<Candidate> listCan = new ArrayList<Candidate>();
-//	listCan.addAll(listExp);
-//	listCan.addAll(listFresher);
-//	listCan.addAll(listIntern);
-//	
-//	for (Candidate candidate : listCan) {
-//		candidate.showMe();
-//	}
+	List<Experience> listExp = new ExperienceDao().select();
+	List<Fresher> listFresher = new FresherDao().select();
+	List<Intern> listIntern = new InternDao().select();
+	List<Candidate> listCan = new ArrayList<Candidate>();
+	listCan.addAll(listExp);
+	listCan.addAll(listFresher);
+	listCan.addAll(listIntern);
+	
+	Collections.sort(listCan,new sort());
+//	listCan.stream().sorted(new sort().thenComparing(new sort()).thenComparing(new sort())).forEach(Candidate->Candidate.showMe());
+	for (Candidate candidate : listCan) {
+		candidate.showMe();
+	}
 
 //	Collections.sort(listCan, new sortByName());
 //	
@@ -53,7 +55,8 @@ public class maintain {
 //		candidate.showMe();
 //	}
 
-		updateCandidate();
+//		updateCandidate();
+		
 	}
 
 	private static void updateCandidate() {
@@ -126,3 +129,58 @@ class sortByName implements Comparator<Candidate> {
 
 	}
 }
+ // Sắp xếp thèn EXP lên trước thèn Fresher rồi đến thèn Intern. Fresher thì sắp xếp số năm kinh nghiệm nếu bằng thì sắp xếp tên
+// thèn Fresher thì xếp rank từ nhỏ tới lớn nếu bằng thì tên
+// thèn Intern thì xếp Semeter lớn đến nhỏ
+class sort implements Comparator<Candidate>{
+
+	@Override
+	public int compare(Candidate o1, Candidate o2) {
+		if (o1 instanceof Experience && o2 instanceof Experience) {
+			if (((Experience)o1).getExpInYear() > ((Experience)o2).getExpInYear()) {
+				return -1;
+			} else if (((Experience)o1).getExpInYear() < ((Experience)o2).getExpInYear()) {
+				return 1;
+			} else {
+				return -o1.getFullName().compareTo(o2.getFullName());
+			}
+		}
+		
+		if (o1 instanceof Fresher && o2 instanceof Fresher) {
+			if (((Fresher)o1).getGraduation_rank().compareTo(((Fresher)o2).getGraduation_rank()) > 0){
+				return 1;
+			} else if (((Fresher)o1).getGraduation_rank().compareTo(((Fresher)o2).getGraduation_rank()) > 0) {
+				return -1;
+			} else {
+				return -o1.getFullName().compareTo(o2.getFullName());
+			}
+		}
+		
+		if (o1 instanceof Intern && o2 instanceof Intern) {
+			if (((Intern)o1).getSemester() > ((Intern)o2).getSemester()) {
+				return -1;
+			} else if (((Intern)o1).getSemester() < ((Intern)o2).getSemester()) {
+				return 1;
+			} else {
+				return -o1.getFullName().compareTo(o2.getFullName());
+			}
+		}
+		
+		if (o1 instanceof Experience && !(o2 instanceof Experience)) {
+			return -1;
+		}
+		
+		if (o1 instanceof Fresher && !(o2 instanceof Fresher)) {
+			return 0;
+		}
+		
+		if (o1 instanceof Intern && !(o2 instanceof Intern)) {
+			return 1;
+		}
+		return 0;	
+	}
+}
+
+
+
+
